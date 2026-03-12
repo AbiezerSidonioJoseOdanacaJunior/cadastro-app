@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <main class="card">
+    <h1>Cadastro de Usuário</h1>
+    <p>Salvar Nome, E-mail e senha no MySQL com validação.</p>
+
+    <form id="form" action="/register" method="POST">
+      <label>Nome</label>
+      <input type="text" id="nome" name="nome" placeholder="Ex: João Pedro" required>
+
+      <label>Email</label>
+      <input type="email" id="email" name="email" placeholder="Ex: email@gmail.com" required>
+
+      <label>Senha</label>
+      <input type="password" id="senha" name="senha" placeholder="Min 8, com letras e números" required>
+
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <div id="msg" class="msg" style="display:none;"></div>
+    <ul id="regras"></ul>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/function.js') }}"></script>
+</body>
+</html>
