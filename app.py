@@ -149,6 +149,82 @@ def login():
         if conn:
             conn.close()
 
+@app.post("/editar_perfil")
+def editar_perfil():
+    if "usuario_id" not in session:
+        return redirect(url_for("login_page"))
+
+    nome = (request.form.get("nome") or "").strip()
+    email = (request.form.get("email") or "").strip()
+
+    if len(nome) < 3:
+        return "Nome deve ter pelo menos 3 caracteres.", 400
+    if not EMAIL_RE.match(email):
+        return "Email inválido.", 400
+
+    conn = None
+    cur = None
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cur = conn.cursor()
+
+        cur.execute(
+            "SELECT id FROM usuarios WHERE email = %s AND id <> %s",
+            (email, session["usuario_id"])
+        )
+        if cur.fetchone():
+            return "Esse email já está em uso por outro usuário.", 400
+
+        cur.execute(
+            "UPDATE usuarios SET nome = %s, email = %s WHERE id = %s",
+            (nome, email, session["usuario_id"])
+        )
+        conn.commit()
+
+        session["usuario_nome"] = nome
+
+        return redirect(url_for("perfil"))
+
+    except mysql.connector.Error as e:
+        return f"Erro ao editar perfil: {e}", 500
+
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+@app.post("/excluir_perfil")
+def excluir_perfil():
+    if "usuario_id" not in session:
+        return redirect(url_for("login_page"))
+
+    conn = None
+    cur = None
+
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cur = conn.cursor()
+
+        cur.execute(
+            "DELETE FROM usuarios WHERE id = %s",
+            (session["usuario_id"],)
+        )
+        conn.commit()
+
+        session.clear()
+        return redirect(url_for("home"))
+
+    except mysql.connector.Error as e:
+        return f"Erro ao excluir perfil: {e}", 500
+
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
 @app.get("/logout")
 def logout():
     session.clear()

@@ -11,8 +11,22 @@
     <h1>Perfil do Usuário</h1>
 
     <p><strong>ID:</strong> {{ usuario.id }}</p>
-    <p><strong>Nome:</strong> {{ usuario.nome }}</p>
-    <p><strong>Email:</strong> {{ usuario.email }}</p>
+
+    <form action="/editar_perfil" method="POST">
+      <label>Nome</label>
+      <input type="text" name="nome" value="{{ usuario.nome }}" required>
+
+      <label>Email</label>
+      <input type="email" name="email" value="{{ usuario.email }}" required>
+
+      <button type="submit">Salvar Alterações</button>
+    </form>
+
+    <br>
+
+    <form action="/excluir_perfil" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir sua conta?');">
+      <button type="submit" style="background-color: #d9534f;">Excluir Conta</button>
+    </form>
 
     <br>
     <a href="/logout">Sair</a>
